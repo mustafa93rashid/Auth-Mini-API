@@ -1,0 +1,29 @@
+require("dotenv").config();
+const express = require("express");
+const app = express();
+const mongoose = require("mongoose");
+
+app.use(express.json());
+app.use(require("morgan")("dev"));
+
+const errorHandler = require("./middlewares/errorHandler");
+const notFound = require("./middlewares/notFound");
+
+app.get("/api/health", (req, res) => {res.status(200).json("OK")})
+
+app.use(errorHandler);
+app.use(notFound);
+
+const PORT = process.env.PORT || 3000;
+const MONGODB_URL = process.env.MONGODB_URL;
+
+mongoose.connect(MONGODB_URL)
+    .then(() => {
+        console.log("Connected to MONGODB Successfully");
+        app.listen(PORT, () => {
+            console.log(`Server is running on http://localhost:${PORT}`);
+        })
+    })
+    .catch(err => {
+        console.log('Error MONGODB', err.message);
+    })
