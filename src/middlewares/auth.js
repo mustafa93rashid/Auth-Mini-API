@@ -1,18 +1,19 @@
 const jwtService = require("../utils/jwtService");
+const cookiesService = require("../utils/cookiesService");
+
 const auth = (req, res, next) => {
   try {
-    const authorization = req.headers.authorization;
+    const token = cookiesService.getData(req, "accessToken");
 
-    if (!authorization) {
+    if (!token) {
       return res.status(403).json({
         success: false,
         message: "Unauthorized",
       });
     }
 
-    const token = authorization.split(" ")[1];
-
     const decoded = jwtService.verify(token);
+    req.user = decoded;
 
     next();
   } catch (error) {

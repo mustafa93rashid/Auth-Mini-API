@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const jwtService = require("../utils/jwtService");
 const passwordService = require("../utils/passwordService");
+const cookiesService = require("../utils/cookiesService");
 
 class AuthController {
   register = async (req, res) => {
@@ -43,14 +44,18 @@ class AuthController {
     user = user.toObject();
     delete user.password;
 
+    cookiesService.setData(res, "accessToken", token);
+
     res.status(201).json({
       success: true,
       data: user,
-      token,
     });
   };
 
   logout = async (req, res) => {
+
+    cookiesService.clearData(res, "accessToken");
+    
     res.status(201).json({
       success: true,
       message: "Logged out successfully",
