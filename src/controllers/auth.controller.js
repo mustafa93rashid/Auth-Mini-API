@@ -55,7 +55,6 @@ class AuthController {
   logout = async (req, res) => {
 
     cookiesService.clearData(res, "accessToken");
-    
     res.status(201).json({
       success: true,
       message: "Logged out successfully",

@@ -10,10 +10,9 @@ app.use(express.json());
 app.use(cookies());
 app.use(require("morgan")("dev"));
 
-
-
 app.get("/api/health", (req, res) => {res.status(200).json("OK")})
 app.use("/api/v1/auth", require("./routes/auth.route"));
+app.use("/api/v1/protected", require("./routes/protected.routes"));
 
 app.use(errorHandler);
 app.use(notFound);
