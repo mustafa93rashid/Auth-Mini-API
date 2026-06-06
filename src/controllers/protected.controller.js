@@ -2,9 +2,11 @@ const User = require("../models/User");
 
 class ProtectedController {
   welcome = async (req, res) => {
+
     res.status(200).json({
       success: true,
       message: `Welcome ${req.user.name}`,
+      
     });
   };
 
@@ -32,37 +34,37 @@ class ProtectedController {
     });
   };
 
-adminUsers = async (req, res) => {
-  const users = await User.find().select("-password");
+  adminUsers = async (req, res) => {
+    const users = await User.find().select("-password");
 
-  res.status(200).json({
-    success: true,
-    data: users,
-  });
-};
-
-deleteAdminUser = async (req, res) => {
-  if (req.user._id.toString() === req.params.id) {
-    return res.status(400).json({
-      success: false,
-      message: "You cannot delete your own account",
+    res.status(200).json({
+      success: true,
+      data: users,
     });
-  }
+  };
 
-  const user = await User.findByIdAndDelete(req.params.id);
+  deleteUser = async (req, res) => {
+    if (req.user._id.toString() === req.params.id) {
+      return res.status(400).json({
+        success: false,
+        message: "You cannot delete your own account",
+      });
+    }
 
-  if (!user) {
-    return res.status(404).json({
-      success: false,
-      message: "User not found",
+    const user = await User.findByIdAndDelete(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "User deleted successfully",
     });
-  }
-
-  res.status(200).json({
-    success: true,
-    message: "User deleted successfully",
-  });
-};
+  };
 }
 
 module.exports = new ProtectedController();

@@ -40,7 +40,13 @@ class AuthController {
       });
     }
 
-    const token = jwtService.sign({ _id: user._id, email: user.email });
+    const token = jwtService.sign({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    });
+
     user = user.toObject();
     delete user.password;
 
@@ -53,7 +59,6 @@ class AuthController {
   };
 
   logout = async (req, res) => {
-
     cookiesService.clearData(res, "accessToken");
     res.status(201).json({
       success: true,

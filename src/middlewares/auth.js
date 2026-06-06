@@ -13,7 +13,7 @@ const auth = (req, res, next) => {
     }
 
     const decoded = jwtService.verify(token);
-    req.user = decoded;
+    req.user = { ...decoded };
 
     next();
   } catch (error) {
