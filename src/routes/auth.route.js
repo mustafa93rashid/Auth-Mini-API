@@ -5,9 +5,10 @@ const asyncHandler = require("../utils/asyncHandler");
 const authController = require("../controllers/auth.controller");   
 const auth = require("../middlewares/auth");
 const { signupLimiter, loginLimiter } = require("../middlewares/limiter");
+const { registerValidation, loginValidation } = require("../Validation/auth.validate");
 
-router.post("/register", [signupLimiter], asyncHandler(authController.register));
-router.post("/login", [loginLimiter], asyncHandler(authController.login));
+router.post("/register", [signupLimiter, ...registerValidation], asyncHandler(authController.register));
+router.post("/login", [loginLimiter, ...loginValidation], asyncHandler(authController.login));
 router.post("/logout", [auth], asyncHandler(authController.logout));
 
 module.exports = router;
