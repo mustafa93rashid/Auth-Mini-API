@@ -8,7 +8,12 @@ const { signupLimiter, loginLimiter } = require("../middlewares/limiter");
 const { registerValidation, loginValidation } = require("../Validation/auth.validate");
 
 router.post("/register", [signupLimiter, ...registerValidation], asyncHandler(authController.register));
+
 router.post("/login", [loginLimiter, ...loginValidation], asyncHandler(authController.login));
+
 router.post("/logout", [auth], asyncHandler(authController.logout));
+
+router.put("/refresh-token",  asyncHandler(authController.refreshToken));
+
 
 module.exports = router;

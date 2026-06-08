@@ -40,7 +40,14 @@ class AuthController {
       });
     }
 
-    const token = jwtService.sign({
+    const token = jwtService.generateAcessToken({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    });
+
+    const refreshToken = jwtService.generateRefreshToken({
       _id: user._id,
       name: user.name,
       email: user.email,
@@ -50,7 +57,8 @@ class AuthController {
     user = user.toObject();
     delete user.password;
 
-    cookiesService.setData(res, "accessToken", token);
+    cookiesService.setAccessToken(res, token);
+    cookiesService.setRefreshToken(res, refreshToken);
 
     res.status(201).json({
       success: true,
@@ -59,10 +67,41 @@ class AuthController {
   };
 
   logout = async (req, res) => {
-    cookiesService.clearData(res, "accessToken");
+    cookiesService.clearTokens(res);
     res.status(201).json({
       success: true,
       message: "Logged out successfully",
+    });
+  };
+
+  refreshToken = async (req, res) => {
+    const refreshToken = cookiesService.getRefreshToken(req);
+
+    if (!refreshToken) {
+      return res.status(401).json({
+        success: false,
+        message: "No refresh token provided",
+      });
+    }
+
+    const decoded = jwtService.verifyRefreshToken(refreshToken);
+
+    const data = {
+      _id: decoded._id,
+      name: decoded.name,
+      email: decoded.email,
+      role: decoded.role,
+    };
+
+    const token = jwtService.generateAcessToken(data);
+    const refToken = jwtService.generateRefreshToken(data);
+
+    cookiesService.setAccessToken(res, token);
+    cookiesService.setRefreshToken(res, refToken);
+
+    res.status(200).json({
+      success: true,
+      message: "Token refreshed successfully",
     });
   };
 }

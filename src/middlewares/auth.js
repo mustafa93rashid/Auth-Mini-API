@@ -3,7 +3,7 @@ const cookiesService = require("../utils/cookiesService");
 
 const auth = (req, res, next) => {
   try {
-    const token = cookiesService.getData(req, "accessToken");
+    const token = cookiesService.getAccessToken(req);
 
     if (!token) {
       return res.status(403).json({
@@ -12,7 +12,7 @@ const auth = (req, res, next) => {
       });
     }
 
-    const decoded = jwtService.verify(token);
+    const decoded = jwtService.verifyAccessToken(token);
     req.user = { ...decoded };
 
     next();
