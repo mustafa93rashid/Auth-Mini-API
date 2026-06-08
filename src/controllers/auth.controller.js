@@ -5,11 +5,11 @@ const cookiesService = require("../utils/cookiesService");
 
 class AuthController {
   register = async (req, res) => {
-    const { name, phone, email, password } = req.body;
+    const { name, email, password } = req.body;
 
     const hashed = await passwordService.hash(password);
 
-    let user = await User.create({ name, phone, email, password: hashed });
+    let user = await User.create({ name, email, password: hashed });
     user = user.toObject();
     delete user.password;
 

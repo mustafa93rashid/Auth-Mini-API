@@ -1,8 +1,8 @@
 const cookieConfig = {
-    httpOnly: true, // http
-    secure: false, // https
+    httpOnly: true,
+    secure: false,
     sameSite: "strict",
-    maxAge: 15 * 60 * 1000 //  15m
+    maxAge: 60 * 60 * 1000 // 1h
 }
 
 class CookiesService {
