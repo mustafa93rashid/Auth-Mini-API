@@ -30,8 +30,20 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "admin"],
       default: "user",
     },
-  },
-  { timestamps: true },
+
+    blocked: {
+      type: Boolean,
+      default: false,
+    },
+
+    failedLoginAttempts: {
+      type: Number,
+      default: 0,
+    },
+
+    lockedUntil: Date,
+    
+  },{ timestamps: true },
 );
 
 const User = mongoose.model("User", userSchema);

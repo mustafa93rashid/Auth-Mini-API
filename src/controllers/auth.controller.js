@@ -4,6 +4,25 @@ const passwordService = require("../utils/passwordService");
 const cookiesService = require("../utils/cookiesService");
 
 class AuthController {
+  handleFailedLoginAttempts = async (user) => {
+    user.failedLoginAttempts = +(user.failedLoginAttempts || 0) + 1;
+
+    if (user.failedLoginAttempts >= 5) {
+      user.blocked = true;
+      user.lockedUntil = new Date(Date.now() + 30 * 60 * 1000); // Block for 30 minutes
+    }
+
+    await user.save();
+  };
+
+  resetFailedLoginAttempts = async (user) => {
+    user.blocked = false;
+    user.lockedUntil = null;
+    user.failedLoginAttempts = 0;
+
+    await user.save();
+  };
+
   register = async (req, res) => {
     const { name, email, password } = req.body;
 
@@ -25,20 +44,36 @@ class AuthController {
     let user = await User.findOne({ email });
 
     if (!user) {
+      // await this.handleFailedLoginAttempts(user);
+
       return res.status(400).json({
         success: false,
         message: "Invalid email or password",
       });
+    }
+    if (user.blocked) {
+      if (user.lockedUntil <= Date.now()) {
+        await this.resetFailedLoginAttempts(user);
+      } else {
+        return res.status(403).json({
+          success: false,
+          message: "Account is temporarily locked. Please try again later.",
+        });
+      }
     }
 
     const isVerified = await passwordService.compare(password, user.password);
 
     if (!isVerified) {
+      await this.handleFailedLoginAttempts(user);
+
       return res.status(400).json({
         success: false,
         message: "Invalid email or password",
       });
     }
+
+    await this.resetFailedLoginAttempts(user);
 
     const token = jwtService.generateAcessToken({
       _id: user._id,
