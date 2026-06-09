@@ -109,6 +109,19 @@ class AuthController {
     });
   };
 
+  profile = async (req, res) => {
+    if (!req.user) {
+      return res.status(200).json({ message: "User not found" });
+    }
+
+    const user = await User.findById(req.user._id).select("-password");
+
+    res.status(200).json({
+      success: true,
+      data: req.user,
+    });
+  };
+
   refreshToken = async (req, res) => {
     const refreshToken = cookiesService.getRefreshToken(req);
 

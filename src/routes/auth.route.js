@@ -7,6 +7,8 @@ const auth = require("../middlewares/auth");
 const { signupLimiter, loginLimiter } = require("../middlewares/limiter");
 const { registerValidation, loginValidation } = require("../Validation/auth.validate");
 
+router.get("/profile", [auth], asyncHandler(authController.profile))
+
 router.post("/register", [signupLimiter, ...registerValidation], asyncHandler(authController.register));
 
 router.post("/login", [loginLimiter, ...loginValidation], asyncHandler(authController.login));
