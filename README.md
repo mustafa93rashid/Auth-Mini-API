@@ -204,15 +204,6 @@ DELETE /api/v1/admin/users/:id
 https://documenter.getpostman.com/view/45221006/2sBXwqtBW7
 
 
-
-Login using an admin account and test the same routes.
-
-Expected:
-
-```http
-200 OK
-```
-
 ---
 
 ## Security Features
@@ -273,6 +264,6 @@ This protection helps mitigate brute-force attacks.
 
 ## Author
 
-Mustafa
+Mustafa Rashid Abbas
 
 Computer Engineer | MERN Stack Developer
